@@ -2203,12 +2203,9 @@ let layBaySelectionCart = [];
     }
 
     addButton.addEventListener("click", () => {
-      if (!productCheckbox.checked) {
-        selectionMessage.textContent =
-          "Please tick the product circle first.";
-        return;
-      }
-
+      // Selecting at least one exact size/colour combination is sufficient.
+      // The separate product checkbox is only a visual indicator and must
+      // not block customers from adding their already-selected combinations.
       if (!productEligible(product)) {
         selectionMessage.textContent =
           "This product is not available for Lay-Bay.";
@@ -2277,12 +2274,6 @@ let layBaySelectionCart = [];
     });
 
     planButton.addEventListener("click", () => {
-      if (!productCheckbox.checked) {
-        selectionMessage.textContent =
-          "Please tick the product circle first.";
-        return;
-      }
-
       const selected = getSelectedCombinations();
 
       if (selected.length !== 1) {
@@ -2483,9 +2474,6 @@ let layBaySelectionCart = [];
 
         remove
       );
-
-      list.appendChild(card);
-
 
       list.appendChild(card);
     });

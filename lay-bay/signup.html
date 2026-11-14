@@ -19,6 +19,11 @@
     .btn.primary{background:#D4AF37;color:#080808;font-weight:bold}
     #signupMessage{white-space:pre-wrap}
     .field-note{font-size:12px;color:#aaa;margin-top:6px}
+    .password-field{position:relative}
+    .password-field input{padding-right:58px}
+    .password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;gap:5px;min-width:48px;padding:7px;border:0;border-radius:6px;background:transparent;color:#D4AF37;font-size:12px;font-weight:700;cursor:pointer}
+    .password-toggle:focus-visible{outline:2px solid #D4AF37;outline-offset:2px}
+    .password-toggle svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   </style>
 </head>
 
@@ -79,24 +84,52 @@
       >
 
       <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        minlength="8"
-        autocomplete="new-password"
-        placeholder="At least 8 characters"
-        required
-      >
+      <div class="password-field">
+        <input
+          id="password"
+          type="password"
+          minlength="8"
+          autocomplete="new-password"
+          placeholder="At least 8 characters"
+          aria-describedby="passwordNote"
+          required
+        >
+        <button
+          type="button"
+          class="password-toggle"
+          data-password-toggle="password"
+          aria-label="Show password"
+          aria-controls="password"
+          aria-pressed="false"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Show</span>
+        </button>
+      </div>
+      <p id="passwordNote" class="field-note">Use at least 8 characters.</p>
 
       <label for="confirmPassword">Confirm password</label>
-      <input
-        id="confirmPassword"
-        type="password"
-        minlength="8"
-        autocomplete="new-password"
-        placeholder="Enter password again"
-        required
-      >
+      <div class="password-field">
+        <input
+          id="confirmPassword"
+          type="password"
+          minlength="8"
+          autocomplete="new-password"
+          placeholder="Enter password again"
+          required
+        >
+        <button
+          type="button"
+          class="password-toggle"
+          data-password-toggle="confirmPassword"
+          aria-label="Show confirm password"
+          aria-controls="confirmPassword"
+          aria-pressed="false"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Show</span>
+        </button>
+      </div>
 
       <label style="display:flex;gap:9px;align-items:flex-start">
         <input
@@ -137,5 +170,29 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="lay-bay-auth.js"></script>
 
+<script>
+(function () {
+  "use strict";
+
+  const eyeIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const eyeOffIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1.5 0 2.8-.4 4-1"/></svg>';
+
+  document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
+    const input = document.getElementById(button.getAttribute("data-password-toggle"));
+    if (!input) return;
+
+    button.addEventListener("click", function () {
+      const shouldShow = input.type === "password";
+      input.type = shouldShow ? "text" : "password";
+      button.setAttribute("aria-pressed", String(shouldShow));
+      button.setAttribute(
+        "aria-label",
+        shouldShow ? "Hide " + (input.id === "confirmPassword" ? "confirm password" : "password") : "Show " + (input.id === "confirmPassword" ? "confirm password" : "password")
+      );
+      button.innerHTML = (shouldShow ? eyeOffIcon : eyeIcon) + "<span>" + (shouldShow ? "Hide" : "Show") + "</span>";
+    });
+  });
+})();
+</script>
 </body>
 </html>

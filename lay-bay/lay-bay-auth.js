@@ -44,7 +44,7 @@
   }
 
   function validUsername(username) {
-    return /^[A-Za-z0-9_]{3,20}$/.test(username);
+    return /^[A-Za-z]{3,20}$/.test(username);
   }
 
   function friendlyError(error) {
@@ -84,7 +84,7 @@
   async function saveUsername(username) {
     if (!validUsername(username)) {
       throw new Error(
-        "Username must contain 3–20 characters: letters, numbers or underscores only."
+        "Username must contain 3–20 letters only. Do not use spaces, numbers or symbols."
       );
     }
 
@@ -141,7 +141,7 @@
       </p>
 
       <p style="font-size:13px;color:#bbb;">
-        Use 3–20 characters. Letters, numbers and underscores only.
+        Use 3–20 letters only. No spaces, numbers or symbols.
       </p>
 
       <input
@@ -203,7 +203,7 @@
 
         if (!validUsername(username)) {
           message.textContent =
-            "Enter 3–20 characters using letters, numbers or underscores.";
+            "Enter 3–20 letters only. No spaces, numbers or symbols.";
           message.style.color = "#ff7777";
           return;
         }
@@ -382,7 +382,7 @@ googleButton.addEventListener("click", async function () {
       if (!validUsername(username)) {
         show(
           "signupMessage",
-          "Username must contain 3–20 characters using letters, numbers or underscores.",
+          "Username must contain 3–20 letters only. No spaces, numbers or symbols.",
           false
         );
         return;
@@ -426,9 +426,10 @@ googleButton.addEventListener("click", async function () {
           password: password,
 
           options: {
+            emailRedirectTo: new URL("login.html", window.location.href).href,
             data: {
               full_name: fullName,
-              username: username
+              username: username.trim()
             }
           }
         });
@@ -449,7 +450,7 @@ googleButton.addEventListener("click", async function () {
         } else {
           show(
             "signupMessage",
-            "Your account has been created. Please confirm your email before logging in. Your username will be registered when you first sign in. If another customer takes it before then, you may need to choose another.",
+            "Your account has been created. We have reserved your username. Open the confirmation email and verify your email address. You will then be returned to the secure Lay-Bay login page.",
             true
           );
 

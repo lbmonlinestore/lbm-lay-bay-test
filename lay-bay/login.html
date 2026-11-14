@@ -197,7 +197,7 @@
         Before entering your dashboard, choose a unique username.
       </p>
 
-      <small style="color:#bbb;">
+      <small id="firstUsernameNote" style="color:#bbb;">
         Use 3–20 letters only. No spaces, numbers or symbols.
       </small>
 
@@ -206,6 +206,8 @@
         type="text"
         minlength="3"
         maxlength="20"
+        pattern="[A-Za-z]{3,20}"
+        aria-describedby="firstUsernameNote"
         autocomplete="username"
         autocapitalize="none"
         spellcheck="false"
@@ -442,13 +444,7 @@
 
     showMessage("Verifying your Lay-Bay profile...", true);
 
-    let profile = await getCustomerProfile(user.id);
-
-    if (!profile) {
-      throw new Error(
-        "Your Lay-Bay profile has not been created yet. Please contact support."
-      );
-    }
+    let profile = await ensureCustomerProfile(user);
 
     if (profile.account_status !== "active") {
       await db.auth.signOut();
@@ -573,7 +569,7 @@
 
       if (message.toLowerCase().includes("invalid login credentials")) {
         message =
-          "Incorrect email/mobile number or password. Please check your details.";
+          "Incorrect email address or password. Please check your details.";
       }
 
 

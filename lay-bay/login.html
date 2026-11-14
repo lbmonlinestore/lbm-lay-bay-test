@@ -324,7 +324,7 @@
   // Create only the signed-in user's missing profile; the database
   // supplies account_status and RLS restricts user_id to auth.uid().
   async function ensureCustomerProfile(user) {
-    let profile = await ensureCustomerProfile(user);
+    let profile = await getCustomerProfile(user.id);
     if (profile) return profile;
 
     const fullName =

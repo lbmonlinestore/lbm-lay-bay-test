@@ -225,7 +225,7 @@
       </p>
 
       <small style="color:#bbb;">
-        Use 3–20 characters. Letters, numbers and underscores only.
+        Use 3–20 letters only. No spaces, numbers or symbols.
       </small>
 
       <input
@@ -309,7 +309,7 @@
   }
 
   function validUsername(username) {
-    return /^[A-Za-z0-9_]{3,20}$/.test(username);
+    return /^[A-Za-z]{3,20}$/.test(username);
   }
 
   function normaliseZambianPhone(value) {
@@ -375,6 +375,41 @@
     return data;
   }
 
+  // A Google account may pre-date the Lay-Bay profile trigger.
+  // Create only the signed-in user's missing profile; the database
+  // supplies account_status and RLS restricts user_id to auth.uid().
+  async function ensureCustomerProfile(user) {
+    let profile = await ensureCustomerProfile(user);
+    if (profile) return profile;
+
+    const fullName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.user_metadata?.fullName ||
+      null;
+
+    const { error } = await db
+      .from("lay_bay_profiles")
+      .insert({
+        user_id: user.id,
+        full_name: fullName
+      });
+
+    if (error && !/duplicate|already exists/i.test(error.message || "")) {
+      throw error;
+    }
+
+    profile = await getCustomerProfile(user.id);
+
+    if (!profile) {
+      throw new Error(
+        "Your Lay-Bay profile could not be prepared. Please contact LBM support."
+      );
+    }
+
+    return profile;
+  }
+
   // ==================================================
   // 7. SAVE USERNAME THROUGH SECURE DATABASE RPC
   // ==================================================
@@ -382,7 +417,7 @@
   async function saveUsername(username) {
     if (!validUsername(username)) {
       throw new Error(
-        "Username must contain 3–20 characters using letters, numbers or underscores."
+        "Username must contain 3–20 letters only. No spaces, numbers or symbols."
       );
     }
 
@@ -424,7 +459,7 @@
 
     if (!validUsername(username)) {
       message.textContent =
-        "Enter 3–20 characters using letters, numbers or underscores.";
+        "Enter 3–20 letters only. No spaces, numbers or symbols.";
       message.style.color = "#ff7777";
       return;
     }

@@ -256,11 +256,7 @@
 
   const $ = id => document.getElementById(id);
 
-  const method = $("method");
-  const emailField = $("emailField");
-  const phoneField = $("phoneField");
   const emailInput = $("email");
-  const phoneInput = $("phone");
   const passwordInput = $("password");
   const loginForm = $("loginForm");
   const loginButton = $("loginButton");
@@ -580,16 +576,6 @@
           "Incorrect email/mobile number or password. Please check your details.";
       }
 
-      if (
-        usingPhone &&
-        (
-          message.toLowerCase().includes("phone") ||
-          message.toLowerCase().includes("provider")
-        )
-      ) {
-        message =
-          "Mobile login may not be enabled in Supabase yet. Try your email address.";
-      }
 
       showMessage(message, false);
 

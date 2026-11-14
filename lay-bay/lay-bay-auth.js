@@ -326,7 +326,7 @@ googleButton.addEventListener("click", async function () {
 
   try {
     const redirectTo =
-      window.location.origin + window.location.pathname;
+      new URL("login.html", window.location.href).href;
 
     const { data, error } = await db.auth.signInWithOAuth({
       provider: "google",

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,7 +135,6 @@
       align-items: center;
     }
 
-    /* Payment instructions */
     .payment-instructions {
       background: #201c10;
       border: 1px solid var(--gold);
@@ -267,7 +267,6 @@
         <option value="Other">Other</option>
       </select>
 
-      <!-- Receiving-account instructions appear here -->
       <div
         id="paymentInstructions"
         class="payment-instructions lb-hidden"
@@ -314,19 +313,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<div id="lbDiagnostic" style="
-  margin:15px;
-  padding:15px;
-  background:#222;
-  color:white;
-  border:1px solid #D4AF37;
-  border-radius:8px;
-  white-space:pre-wrap;
-">
-Checking dashboard...
-</div>
-
-<!-- Payment instruction display -->
+<!-- Payment instructions -->
 <script>
 (function () {
   const method = document.getElementById("paymentMethod");
@@ -390,85 +377,8 @@ Checking dashboard...
 })();
 </script>
 
-<!-- Dashboard diagnostic -->
-<script>
-(async function () {
-  const box = document.getElementById("lbDiagnostic");
-  const results = [];
-
-  results.push("1. Dashboard HTML: LOADED");
-
-  results.push(
-    "2. Supabase library: " +
-    (window.supabase ? "LOADED" : "NOT LOADED")
-  );
-
-  try {
-    const response = await fetch("lay-bay-customer.js", {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status);
-    }
-
-    const source = await response.text();
-
-    results.push("3. Customer JavaScript file: FOUND");
-
-    try {
-      new Function(source);
-      results.push("4. JavaScript syntax: VALID");
-    } catch (error) {
-      results.push("4. JavaScript syntax: ERROR");
-      results.push(error.message);
-    }
-
-  } catch (error) {
-    results.push("3. Customer JavaScript file: FAILED");
-    results.push(error.message);
-    results.push("4. JavaScript syntax: NOT CHECKED");
-  }
-
-  results.push("");
-  results.push("Dashboard diagnostic complete.");
-
-  box.textContent = results.join("\n");
-})();
-</script>
-
+<!-- Main Lay-Bay customer functionality -->
 <script src="lay-bay-customer.js"></script>
-
-<script>
-window.addEventListener("load", async function () {
-  const box = document.getElementById("lbDiagnostic");
-
-  try {
-    if (!window.LBM_CUSTOMER_DB) {
-      box.textContent +=
-        "\n5. Customer Supabase connection: NOT EXPOSED";
-      return;
-    }
-
-    const { data, error } =
-      await window.LBM_CUSTOMER_DB.auth.getSession();
-
-    if (error) {
-      box.textContent +=
-        "\n5. Session check: ERROR - " + error.message;
-      return;
-    }
-
-    box.textContent += data.session
-      ? "\n5. Customer session: ACTIVE"
-      : "\n5. Customer session: NOT ACTIVE";
-
-  } catch (error) {
-    box.textContent +=
-      "\n5. Session check: FAILED - " + error.message;
-  }
-});
-</script>
 
 </body>
 </html>

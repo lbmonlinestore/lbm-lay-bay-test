@@ -437,7 +437,33 @@ googleButton.addEventListener("click", async function () {
         if (error) throw error;
 
         if (data.session) {
-          await saveUsername(username);
+          // The Auth database trigger already creates the profile
+          // and stores the submitted username from user metadata.
+          // Do not call set_lay_bay_username() a second time here.
+          const profile = await getCustomerProfile(data.user.id);
+
+          if (!profile) {
+            throw new Error(
+              "Your account was created, but your Lay-Bay profile could not be verified. Please contact support."
+            );
+          }
+
+          if (profile.account_status !== "active") {
+            await db.auth.signOut();
+            throw new Error(
+              "Your Lay-Bay account is not currently active. Please contact support."
+            );
+          }
+
+          if (!profile.username) {
+            showUsernameSetup();
+            show(
+              "signupMessage",
+              "Account created. Please choose your Lay-Bay username to continue.",
+              true
+            );
+            return;
+          }
 
           show(
             "signupMessage",
